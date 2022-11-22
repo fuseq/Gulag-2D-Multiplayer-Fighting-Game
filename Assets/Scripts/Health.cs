@@ -36,9 +36,10 @@ public class Health : MonoBehaviour
             health = maxHealth;
         }
     }
-   public void getHeal()
+   public float getHeal()
    {
        Debug.Log(health);
+       return health;
    }
    
 }

@@ -21,8 +21,8 @@ public class CharacterMovement : MonoBehaviour, IPunObservable
     private float dashingTime = 0.2f;
     private float dashingCooldown=5f;
     private PhotonView m_view;
-    
-    
+    private GameObject healthBar;
+    private Health health;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,7 +34,7 @@ public class CharacterMovement : MonoBehaviour, IPunObservable
         m_view = GetComponent<PhotonView>();
         AddObservable();
         gameObject.AddComponent<Health>();
-        
+        health = gameObject.GetComponent<Health>();
 
     }
     
@@ -45,6 +45,7 @@ public class CharacterMovement : MonoBehaviour, IPunObservable
         if (!m_view.IsMine) return;
        if(GetComponent<PhotonView>().IsMine==true)
        {
+           
         if (isDashing)
         {
             return;
@@ -65,8 +66,15 @@ public class CharacterMovement : MonoBehaviour, IPunObservable
         }
         if(Input.GetKeyDown(KeyCode.M))
         {
-            gameObject.GetComponent<Health>().damage(5);
-            gameObject.GetComponent<Health>().getHeal();
+            health.damage(10);
+            health.getHeal();
+            foreach (Transform eachChild in transform)
+            {
+                if (eachChild.name == "pfHealthBar")
+                {
+                    eachChild.localScale =new Vector3((health.getHeal()/100)*1,1,1);
+                }
+            }
         }
         
         if (Input.GetKey(KeyCode.Mouse0))

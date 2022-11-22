@@ -10,7 +10,16 @@ public class DestroyPowerUp : MonoBehaviour
     {
         
         if(collision.gameObject.tag == "Player"){
+            collision.gameObject.GetComponent<Health>().heal(10);
+            Debug.Log(collision.gameObject.GetComponent<Health>().getHeal());
             GetComponent<PhotonView>().RPC("destroyHealthPack", RpcTarget.AllBuffered);
+            foreach (Transform eachChild in collision.transform)
+            {
+                if (eachChild.name == "pfHealthBar")
+                {
+                    eachChild.localScale =new Vector3((collision.gameObject.GetComponent<Health>().getHeal()/100)*1,1,1);
+                }
+            }
         }
                 
     }
