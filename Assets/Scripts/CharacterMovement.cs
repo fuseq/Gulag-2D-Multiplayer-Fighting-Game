@@ -23,6 +23,8 @@ public class CharacterMovement : MonoBehaviour, IPunObservable
     private PhotonView m_view;
     private GameObject healthBar;
     private Health health;
+    private GameObject gameoversc;
+    public GameObject mngonline;
     // Start is called before the first frame update
     void Start()
     {
@@ -35,18 +37,24 @@ public class CharacterMovement : MonoBehaviour, IPunObservable
         AddObservable();
         gameObject.AddComponent<Health>();
         health = gameObject.GetComponent<Health>();
+        gameoversc = GameObject.Find("Canvas");
+        mngonline=GameObject.Find("Manager");
+         
 
     }
     
 
     // Update is called once per frame
     void Update()
-    { 
+    {
+
         if (!m_view.IsMine) return;
-       if(GetComponent<PhotonView>().IsMine==true)
+       if(m_view.IsMine==true)
        {
+           waitingScreen();
+           deathScreen();
            
-        if (isDashing)
+           if (isDashing)
         {
             return;
         }
@@ -128,6 +136,44 @@ public class CharacterMovement : MonoBehaviour, IPunObservable
             m_view.ObservedComponents.Add(this);
         }
     }
+    public void destroyCharacter() 
+    {
+        Destroy(gameObject);
+    }
+
+    public void waitingScreen()
+    {
+        if (mngonline.GetComponent<ManageOnline>().playerCount==2)
+        {
+            foreach (Transform eachChild in gameoversc.transform)
+            {
+                if (eachChild.name == "WaitingScreen")
+                {
+                    eachChild.gameObject.SetActive(false);
+                }
+            } 
+        }
+    
+    }
+    public void deathScreen()
+    {
+        if (health.getHeal()==0)
+        {
+            destroyCharacter();
+            mngonline.GetComponent<ManageOnline>().DisconnectPlayer();
+            foreach (Transform eachChild in gameoversc.transform)
+            {
+                if (eachChild.name == "GameOverScreen")
+                {
+                    eachChild.gameObject.SetActive(true);
+                }
+            }
+               
+        }
+    }
+    
+    
+    
 }
 
 

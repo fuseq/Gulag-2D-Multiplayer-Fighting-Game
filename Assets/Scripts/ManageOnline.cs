@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 
 public class ManageOnline : MonoBehaviourPunCallbacks
 {
-    
+    public int playerCount;
     void Start()
     {
         print("Connecting to Server");
@@ -38,8 +38,15 @@ public class ManageOnline : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log("joined to room");
+        playerCounter();
         GameObject nesne = PhotonNetwork.Instantiate("Player", returnSpawnPoint(), Quaternion.identity, 0, null);
       
+    }
+
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        Debug.Log("Other players joined the room.");
+        playerCounter();
     }
 
     public Vector3 returnSpawnPoint()
@@ -72,7 +79,7 @@ public class ManageOnline : MonoBehaviourPunCallbacks
             yield return null;
        
         PhotonNetwork.Disconnect();
-        print("bomba");
+        
    
     }
 
@@ -99,6 +106,16 @@ public class ManageOnline : MonoBehaviourPunCallbacks
     {
         Debug.Log("Error: creating room");
     }
+
+    public void playerCounter()
+    {
+        if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
+        {
+            playerCount = PhotonNetwork.CurrentRoom.PlayerCount;
+
+        }
+    }
+    
 
   
 }

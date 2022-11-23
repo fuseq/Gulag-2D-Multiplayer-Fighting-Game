@@ -536,6 +536,7 @@ MonoBehaviour:
   rb2d: {fileID: 5640686267650116541}
   activeMoveSpeed: 0
   tr: {fileID: 5640686267650116519}
+  mngonline: {fileID: 0}
 --- !u!58 &5640686267650116517
 CircleCollider2D:
   m_ObjectHideFlags: 0
