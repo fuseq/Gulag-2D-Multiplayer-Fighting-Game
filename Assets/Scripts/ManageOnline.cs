@@ -12,14 +12,14 @@ public class ManageOnline : MonoBehaviourPunCallbacks
     public int playerCount;
     void Start()
     {
-        print("Connecting to Server");
+        
         
         PhotonNetwork.ConnectUsingSettings();
     }
 
     public override void OnConnectedToMaster()
     {
-        print("connected to server");
+        
         print(PhotonNetwork.LocalPlayer.NickName);
         PhotonNetwork.JoinLobby();
     }
@@ -31,7 +31,7 @@ public class ManageOnline : MonoBehaviourPunCallbacks
     }
    public override void OnJoinedLobby()
     {
-        Debug.Log("joined to lobby");
+        
         PhotonNetwork.JoinOrCreateRoom("room", new RoomOptions { MaxPlayers = 2, IsOpen = true, IsVisible = true },TypedLobby.Default);
         
     }
@@ -40,6 +40,7 @@ public class ManageOnline : MonoBehaviourPunCallbacks
         Debug.Log("joined to room");
         playerCounter();
         GameObject nesne = PhotonNetwork.Instantiate("Player", returnSpawnPoint(), Quaternion.identity, 0, null);
+        
       
     }
 

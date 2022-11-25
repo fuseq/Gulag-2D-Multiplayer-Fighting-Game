@@ -7,16 +7,6 @@ public class MainMenu : MonoBehaviour
 {
     public string firstLevel;
     public GameObject optionScreen;
-    void Start()
-    {
-        
-    }
-
-    
-    void Update()
-    {
-        
-    }
 
     public void StartGame()
     {

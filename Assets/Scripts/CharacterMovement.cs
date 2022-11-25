@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
-
+using TMPro;
 [RequireComponent(typeof(PhotonView))]
 [RequireComponent(typeof(SpriteRenderer))]
-public class CharacterMovement : MonoBehaviour, IPunObservable
+public class CharacterMovement : MonoBehaviourPun, IPunObservable
 {
     public float moveSpeed;
     public Rigidbody2D rb2d;
@@ -25,6 +25,10 @@ public class CharacterMovement : MonoBehaviour, IPunObservable
     private Health health;
     private GameObject gameoversc;
     public GameObject mngonline;
+    [SerializeField] 
+    private TMP_Text nameText;
+
+    public string username = "ads";
     // Start is called before the first frame update
     void Start()
     {
@@ -39,18 +43,20 @@ public class CharacterMovement : MonoBehaviour, IPunObservable
         health = gameObject.GetComponent<Health>();
         gameoversc = GameObject.Find("Canvas");
         mngonline=GameObject.Find("Manager");
-         
+        nameText.text = m_view.Owner.NickName;
 
     }
     
-
     // Update is called once per frame
     void Update()
     {
-
-        if (!m_view.IsMine) return;
+        
+       if (!m_view.IsMine) return;
        if(m_view.IsMine==true)
-       {
+       {;
+             
+            
+           
            waitingScreen();
            deathScreen();
            
