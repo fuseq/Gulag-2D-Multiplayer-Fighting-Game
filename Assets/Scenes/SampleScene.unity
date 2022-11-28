@@ -154,6 +154,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCount: 0
+  newController: {fileID: 22100000, guid: b810f2280bb2a6b4cbf996716e6e3d55, type: 2}
+  oldController: {fileID: 9100000, guid: b95265f99b6d90e438df1308a89c8bab, type: 2}
+  characterDB: {fileID: 11400000, guid: c499364dfbbd5474b93dc6a5fc28bc1f, type: 2}
 --- !u!4 &124936307
 Transform:
   m_ObjectHideFlags: 0

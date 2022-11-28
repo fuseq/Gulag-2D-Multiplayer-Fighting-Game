@@ -32,9 +32,12 @@ public class PlayerName : MonoBehaviour
     public void CloseNameSelect()
     {
         nameSelectScreen.SetActive(false);
-        PhotonNetwork.NickName = nametf.text;
+       
+        PhotonNetwork.NickName = nametf.text+CharacterManager.selectedOption;
+        
+        
         Debug.Log(PhotonNetwork.NickName);
-
+        
     }
 
     

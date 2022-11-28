@@ -27,7 +27,9 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
     public GameObject mngonline;
     [SerializeField] 
     private TMP_Text nameText;
-
+   
+    
+    
     public string username = "ads";
     // Start is called before the first frame update
     void Start()
@@ -44,19 +46,19 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
         gameoversc = GameObject.Find("Canvas");
         mngonline=GameObject.Find("Manager");
         nameText.text = m_view.Owner.NickName;
-
+        
+        
+        
+       
     }
     
     // Update is called once per frame
     void Update()
     {
-        
-       if (!m_view.IsMine) return;
-       if(m_view.IsMine==true)
+        if (!m_view.IsMine) return;
+       
+        if(m_view.IsMine)
        {;
-             
-            
-           
            waitingScreen();
            deathScreen();
            
@@ -102,7 +104,12 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
         }
        }
     }
-    
+
+    private void FixedUpdate()
+    {
+        if (!m_view.IsMine) return;
+    }
+
 
     private IEnumerator Dash()
     {
@@ -178,7 +185,7 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
         }
     }
     
-    
+   
     
 }
 

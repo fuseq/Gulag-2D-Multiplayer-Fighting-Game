@@ -6,13 +6,14 @@ using Photon.Realtime;
 using Photon.Pun;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
-
+using Hashtable=ExitGames.Client.Photon.Hashtable;
 public class ManageOnline : MonoBehaviourPunCallbacks
 {
     public int playerCount;
+    
     void Start()
     {
-        
+       
         
         PhotonNetwork.ConnectUsingSettings();
     }
@@ -41,11 +42,14 @@ public class ManageOnline : MonoBehaviourPunCallbacks
         playerCounter();
         GameObject nesne = PhotonNetwork.Instantiate("Player", returnSpawnPoint(), Quaternion.identity, 0, null);
         
+        
+        
       
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
+       
         Debug.Log("Other players joined the room.");
         playerCounter();
     }
@@ -116,7 +120,7 @@ public class ManageOnline : MonoBehaviourPunCallbacks
 
         }
     }
-    
+  
 
   
 }

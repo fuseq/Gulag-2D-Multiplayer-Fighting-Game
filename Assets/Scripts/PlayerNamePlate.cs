@@ -12,10 +12,20 @@ public class PlayerNamePlate : MonoBehaviour
     private TMP_Text usernameText;
     [SerializeField] 
     private CharacterMovement character;
- 
+    public RuntimeAnimatorController newController;
+    
     // Update is called once per frame
     void Update()
     {
-        usernameText.text = character.photonView.Owner.NickName;
+        string chName=character.photonView.Owner.NickName.Substring(0, character.photonView.Owner.NickName.Length - 1);
+        string skin=character.photonView.Owner.NickName.Substring(character.photonView.Owner.NickName.Length - 1);
+        usernameText.text =chName ;
+        if (skin=="1")
+        {
+            Animator animator = character.GetComponent<Animator>();
+            animator.runtimeAnimatorController = newController;
+        }
+            
+    
     }
 }
