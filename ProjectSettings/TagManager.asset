@@ -9,6 +9,9 @@ TagManager:
   - GameOver
   - PlayerSkin1
   - PlayerSkin2
+  - CooldownItem
+  - SpeedUpItem
+  - DmgUpItem
   layers:
   - Default
   - TransparentFX

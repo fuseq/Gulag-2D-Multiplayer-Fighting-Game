@@ -10,16 +10,33 @@ public class DestroyPowerUp : MonoBehaviour
     {
         
         if(collision.gameObject.tag == "Player"){
-            collision.gameObject.GetComponent<Health>().heal(10);
-            Debug.Log(collision.gameObject.GetComponent<Health>().getHeal());
-            GetComponent<PhotonView>().RPC("destroyHealthPack", RpcTarget.AllBuffered);
-            foreach (Transform eachChild in collision.transform)
+            if (gameObject.tag=="HealItem")
             {
-                if (eachChild.name == "pfHealthBar")
+                collision.gameObject.GetComponent<Health>().heal(10);
+                Debug.Log(collision.gameObject.GetComponent<Health>().getHeal());
+                foreach (Transform eachChild in collision.transform)
                 {
-                    eachChild.localScale =new Vector3((collision.gameObject.GetComponent<Health>().getHeal()/100)*1,1,1);
+                    if (eachChild.name == "pfHealthBar")
+                    {
+                        eachChild.localScale =new Vector3((collision.gameObject.GetComponent<Health>().getHeal()/100)*1,1,1);
+                    }
                 }
             }
+            if (gameObject.tag=="CooldownItem")
+            {
+                collision.gameObject.GetComponent<CharacterMovement>().resetDashCooldown();
+            }
+            if (gameObject.tag=="SpeedUpItem")
+            {
+                collision.gameObject.GetComponent<CharacterMovement>().IncreaseSpeed();
+            }
+            if (gameObject.tag=="DmgUpItem")
+            {
+                collision.gameObject.GetComponent<CharacterMovement>().IncreaseSpeed();
+            }
+           
+            GetComponent<PhotonView>().RPC("destroyHealthPack", RpcTarget.AllBuffered);
+           
         }
                 
     }

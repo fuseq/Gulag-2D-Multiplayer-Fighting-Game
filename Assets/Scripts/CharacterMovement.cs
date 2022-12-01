@@ -27,9 +27,9 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
     public GameObject mngonline;
     [SerializeField] 
     private TMP_Text nameText;
-   
-    
-    
+    private bool isSpeedUp;
+    float SpawnTimer = 5f;
+    private float SpeedUpVal = 6;
     public string username = "ads";
     // Start is called before the first frame update
     void Start()
@@ -69,7 +69,7 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
        moveInput.x = Input.GetAxisRaw("Horizontal");
        moveInput.y = Input.GetAxisRaw("Vertical");
        moveInput.Normalize();
-       rb2d.velocity = moveInput * activeMoveSpeed;
+       speedConfig();
        Vector3 vel = transform.rotation * rb2d.velocity;
         if(rb2d.velocity.magnitude > 0)
             animator.SetBool("isMoving",true);
@@ -127,7 +127,34 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
         canDash = true;
     }
 
-   
+    public void resetDashCooldown()
+    {
+        canDash = true;
+    }
+
+    public void speedConfig()
+    {
+        if (isSpeedUp)
+        {
+            rb2d.velocity = moveInput * SpeedUpVal;
+            SpawnTimer -= Time.deltaTime;
+            if (SpawnTimer <= 0f)
+            {
+                isSpeedUp = false;
+                SpawnTimer = 5f;
+            }
+        }
+        else
+        {
+            rb2d.velocity = moveInput * activeMoveSpeed;
+        }
+    }
+
+    public void IncreaseSpeed()
+    {
+        isSpeedUp = true;
+    }
+    
     
     
 

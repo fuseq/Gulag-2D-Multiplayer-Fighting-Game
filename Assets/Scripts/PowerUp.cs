@@ -32,7 +32,7 @@ public class PowerUp : MonoBehaviour
             SpawnTimer -= Time.deltaTime;
             if (SpawnTimer <= 0f)
             {
-                nesne = PhotonNetwork.Instantiate("Heal", returnSpawnPoint(), Quaternion.identity, 0, null);
+                nesne = PhotonNetwork.Instantiate(itemType(), returnSpawnPoint(), Quaternion.identity, 0, null);
                 SpawnTimer = 5f;
 
             }
@@ -51,9 +51,23 @@ public class PowerUp : MonoBehaviour
         int selectedsp = Random.Range(1, 5);
         if (selectedsp == 1) return sp1;
         if (selectedsp == 2) return sp2;
-        if  (selectedsp == 3) return sp3;
-         return sp4;
+        if  (selectedsp == 3) return sp3; 
+        return sp4;
        
+    }
+
+    public string itemType()
+    {
+        string heal = "Heal";
+        string cooldown = "Cooldown";
+        string dmgup = "DmgUp";
+        string speedup = "Speed";
+        int selecteditem = Random.Range(1, 5);
+        if (selecteditem == 1) return heal;
+        if (selecteditem == 2) return cooldown;
+        if  (selecteditem == 3) return dmgup;
+        return speedup;
+        
     }
 }
    
