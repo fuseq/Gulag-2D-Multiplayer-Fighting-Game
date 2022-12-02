@@ -7,11 +7,11 @@ public class MainMenu : MonoBehaviour
 {
     public string firstLevel;
     public GameObject optionScreen;
-    public GameObject characterSelectScreen;
+    public GameObject chSelect;
+    
     public void StartGame()
     {
         SceneManager.LoadScene((firstLevel));
-        
     }
     public void OpenOptions()
     {
@@ -23,12 +23,13 @@ public class MainMenu : MonoBehaviour
     }
     public void OpenCharacterSelect()
     {
-        characterSelectScreen.SetActive(true);
+        chSelect.SetActive(true);
     }
     public void CloseCharacterSelect()
     {
-        characterSelectScreen.SetActive(false);
+        chSelect.SetActive(false);
     }
+  
     public void QuitGame()
     {
         Application.Quit();

@@ -28,12 +28,16 @@ public class PlayerName : MonoBehaviour
             setNameBtn.interactable = false;
     }
 
+    public void OpenNameSelect()
+    {
+        nameSelectScreen.SetActive(true);
+    }
 
     public void CloseNameSelect()
     {
         nameSelectScreen.SetActive(false);
-       
-        PhotonNetwork.NickName = nametf.text+CharacterManager.selectedOption;
+        Debug.Log(PlayerPrefs.GetInt("SelectedOption")+" isim kısmı"); 
+        PhotonNetwork.NickName = nametf.text+PlayerPrefs.GetInt("SelectedOption");;
         
         
         Debug.Log(PhotonNetwork.NickName);

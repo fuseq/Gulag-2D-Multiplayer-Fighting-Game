@@ -9,7 +9,8 @@ public class CharacterManager : MonoBehaviour
     public CharacterDatabase characterDB;
     public TMP_Text nameText;
     public SpriteRenderer artworkSprite;
-    public  static  int selectedOption = 0;
+    public int selectedOption = 0;
+    public GameObject characterSelectScreen;
     void Start()
     {
         if (!PlayerPrefs.HasKey("SelectedOption"))
@@ -32,6 +33,7 @@ public class CharacterManager : MonoBehaviour
         }
         UpdateCharacter(selectedOption);
         Save();
+        
     }
     public void Backption()
     {
@@ -58,8 +60,15 @@ public class CharacterManager : MonoBehaviour
     private void Save()
     {
         PlayerPrefs.SetInt("SelectedOption",selectedOption);
-        
+        Debug.Log(PlayerPrefs.GetInt("SelectedOption")+" sorun");
     }
-
+    public void OpenCharacterSelect()
+    {
+        characterSelectScreen.SetActive(true);
+    }
+    public void CloseCharacterSelect()
+    {
+        characterSelectScreen.SetActive(false);
+    }
     
 }
