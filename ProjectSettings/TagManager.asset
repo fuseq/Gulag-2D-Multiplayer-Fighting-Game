@@ -12,6 +12,8 @@ TagManager:
   - CooldownItem
   - SpeedUpItem
   - DmgUpItem
+  - DashHUD
+  - AttackPoint
   layers:
   - Default
   - TransparentFX
@@ -23,8 +25,8 @@ TagManager:
   - 
   - 
   - 
-  - Enemy
-  - 
+  - Player
+  - AttackPoint
   - 
   - 
   - 
