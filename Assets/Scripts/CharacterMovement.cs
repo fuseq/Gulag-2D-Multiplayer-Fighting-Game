@@ -116,10 +116,12 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
             else if (vel.x > 0)
             {
                 spriteRenderer.flipX = true;
+                transform.GetChild(4).gameObject.transform.localPosition=new Vector3(0.618f,transform.GetChild(4).gameObject.transform.localPosition.y,transform.GetChild(4).gameObject.transform.localPosition.z);
             }
             else if (vel.x < 0)
             {
                 spriteRenderer.flipX = false;
+                transform.GetChild(4).gameObject.transform.localPosition=new Vector3(-0.618f,transform.GetChild(4).gameObject.transform.localPosition.y,transform.GetChild(4).gameObject.transform.localPosition.z);
             }
         }
     }
@@ -192,6 +194,7 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
             spriteRenderer.flipX = (bool)stream.ReceiveNext();
         }
     }
+    
 
     private void AddObservable()
     {
