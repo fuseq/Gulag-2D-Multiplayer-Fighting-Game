@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using Photon.Realtime;
+using Photon.Voice.Unity;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(PhotonView))]
 [RequireComponent(typeof(SpriteRenderer))]
@@ -37,7 +39,12 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
     public Transform attackPoint;
     public float attackRange = 0.5f;
     public LayerMask enemyLayers;
-    
+    private GameObject waitScreen;
+    private GameObject Indicator;
+    private Recorder photonVoiceRecorder;
+
+    [SerializeField] private Sprite mic_off;
+    [SerializeField] private Sprite mic_on;
     // Start is called before the first frame update
     void Start()
     {
@@ -52,11 +59,25 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
         health = gameObject.GetComponent<Health>();
         gameoversc = GameObject.Find("Canvas");
         mngonline = GameObject.Find("Manager");
-        nameText.text = m_view.Owner.NickName;
-       
-        
-        
-        
+        nameText.text = m_view.Owner.NickName; 
+         
+        foreach (Transform eachChild in gameoversc.transform)
+        {
+            if (eachChild.name == "WaitingScreen")
+            {
+                waitScreen = eachChild.gameObject;
+            }
+
+            if (eachChild.name == "VoiceIndicator")
+            {
+                Indicator = eachChild.gameObject;
+            }
+        }
+
+        photonVoiceRecorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
+
+
+
 
     }
 
@@ -64,12 +85,13 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
     void Update()
     {
         if (!m_view.IsMine) return;
-
-        if (m_view.IsMine)
+        waitingScreen();
+        if (m_view.IsMine && waitScreen.activeSelf==false)
         {
+            
             healthBarSync();
             characterHealth = getHeal();
-            waitingScreen();
+            
 
             if (isDashing)
             {
@@ -91,11 +113,16 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
                 StartCoroutine(Dash());
             }
 
-            if (Input.GetKeyDown(KeyCode.M))
+            if (Input.GetKeyDown(KeyCode.Q))
             {
-                health.damage(10);
-                Debug.Log(characterHealth);
-             
+                photonVoiceRecorder.TransmitEnabled = true;
+                Indicator.transform.Find("IndicatorImage").GetComponent<Image>().sprite = mic_on;
+            }
+
+            if (Input.GetKeyUp(KeyCode.Q))
+            {
+                photonVoiceRecorder.TransmitEnabled = false;
+                Indicator.transform.Find("IndicatorImage").GetComponent<Image>().sprite = mic_off;
             }
             
             if (characterHealth == 0)
@@ -108,7 +135,7 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
                 }
             }
             m_view.RPC("checkState", RpcTarget.AllBuffered, false);
-            if (Input.GetKey(KeyCode.Mouse0))
+            if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 Attack();
             }

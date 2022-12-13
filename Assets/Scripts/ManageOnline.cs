@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Realtime;
 using Photon.Pun;
+using Photon.Voice.PUN;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 using Hashtable=ExitGames.Client.Photon.Hashtable;
 public class ManageOnline : MonoBehaviourPunCallbacks
 {
     public int playerCount;
-    
+    Vector3 sp1=new Vector3(-11.84f, 0.6f, 0);
+    Vector3 sp2=new Vector3(11.84f,  0.6f, 0);
     void Start()
     {
        
@@ -40,8 +42,14 @@ public class ManageOnline : MonoBehaviourPunCallbacks
     {
         Debug.Log("joined to room");
         playerCounter();
-        GameObject nesne = PhotonNetwork.Instantiate("Player", returnSpawnPoint(), Quaternion.identity, 0, null);
-        
+        if (PhotonNetwork.PlayerList.Length==1)
+        {
+            GameObject nesne = PhotonNetwork.Instantiate("Player", sp1, Quaternion.identity, 0, null);
+        }
+        else
+        {
+            GameObject nesne = PhotonNetwork.Instantiate("Player", sp2, Quaternion.identity, 0, null); 
+        }
         
         
       
@@ -54,19 +62,7 @@ public class ManageOnline : MonoBehaviourPunCallbacks
         playerCounter();
     }
 
-    public Vector3 returnSpawnPoint()
-    {
-       Vector3 sp1=new Vector3(-11.84f, 6.86f, 0);
-       Vector3 sp2=new Vector3(-11.84f, -6.86f, 0);
-       Vector3 sp3=new Vector3(11.84f, 6.86f, 0);
-       Vector3 sp4=new Vector3(11.84f, -6.86f, 0);
-       int selectedsp = Random.Range(1, 5);
-       if (selectedsp == 1) return sp1;
-       else if (selectedsp == 2) return sp2;
-       else if  (selectedsp == 3) return sp3;
-       else return sp4;
-       
-    }
+  
     
     public void DisconnectPlayer()
     {
