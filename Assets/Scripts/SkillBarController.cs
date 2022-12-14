@@ -5,34 +5,58 @@ using UnityEngine;
 using UnityEngine.UI;
 public class SkillBarController : MonoBehaviour
 {
-    public Image imageCooldown;
-    public float cooldown=5f;
-    private bool isCooldown;
-    private bool isPressed = false;
+    public Image dashImageCooldown;
+    public Image attackImageCooldown;
+    public float dashCooldown=5f;
+    public float attackCooldown=3f;
+    private bool dashIsCooldown;
+    private bool dashIsPressed = false;
+    private bool attackIsCooldown;
+    private bool attackIsPressed = false;
     private void Start()
     {
-        imageCooldown.fillAmount = 1;
+        dashImageCooldown.fillAmount = 1;
     }
 
     void Update()
     {
         
-        if (Input.GetKeyDown(KeyCode.LeftShift) && isPressed==false)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && dashIsPressed==false)
         {
-            imageCooldown.fillAmount = 0;
-            isCooldown = true;
-            isPressed = true;
+            dashImageCooldown.fillAmount = 0;
+            dashIsCooldown = true;
+            dashIsPressed = true;
         }
 
-        if (isCooldown)
+        if (dashIsCooldown)
         {
-            imageCooldown.fillAmount += 1 / cooldown * Time.deltaTime;
-            if (imageCooldown.fillAmount>=1)
+            dashImageCooldown.fillAmount += 1 / dashCooldown * Time.deltaTime;
+            if (dashImageCooldown.fillAmount>=1)
             {
-                imageCooldown.fillAmount = 1;
-                isCooldown = false;
-                isPressed = false;
+                dashImageCooldown.fillAmount = 1;
+                dashIsCooldown = false;
+                dashIsPressed = false;
             }
         }
+        
+        
+        if (Input.GetKeyDown(KeyCode.Mouse0) && attackIsPressed==false)
+        {
+            attackImageCooldown.fillAmount = 0;
+            attackIsCooldown = true;
+            attackIsPressed = true;
+        }
+
+        if (attackIsCooldown)
+        {
+            attackImageCooldown.fillAmount += 1 / attackCooldown * Time.deltaTime;
+            if (attackImageCooldown.fillAmount>=1)
+            {
+                attackImageCooldown.fillAmount = 1;
+                attackIsCooldown = false;
+                attackIsPressed = false;
+            }
+        }
+        
     }
 }

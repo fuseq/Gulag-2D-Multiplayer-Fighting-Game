@@ -24,6 +24,10 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
     private float dashingPower = 24f;
     private float dashingTime = 0.2f;
     private float dashingCooldown = 5f;
+    private bool canHit = true;
+    private bool isHitting;
+    private float hittingTime = 0.2f;
+    private float HittingCooldown = 3f;
     private PhotonView m_view;
     private GameObject healthBar;
     private Health health;
@@ -44,7 +48,9 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
     private Recorder photonVoiceRecorder;
 
     [SerializeField] private Sprite mic_off;
+
     [SerializeField] private Sprite mic_on;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -59,8 +65,8 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
         health = gameObject.GetComponent<Health>();
         gameoversc = GameObject.Find("Canvas");
         mngonline = GameObject.Find("Manager");
-        nameText.text = m_view.Owner.NickName; 
-         
+        nameText.text = m_view.Owner.NickName;
+
         foreach (Transform eachChild in gameoversc.transform)
         {
             if (eachChild.name == "WaitingScreen")
@@ -75,10 +81,6 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
         }
 
         photonVoiceRecorder = GameObject.Find("VoiceManager").GetComponent<Recorder>();
-
-
-
-
     }
 
     // Update is called once per frame
@@ -86,12 +88,11 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
     {
         if (!m_view.IsMine) return;
         waitingScreen();
-        if (m_view.IsMine && waitScreen.activeSelf==false)
+        if (m_view.IsMine && (waitScreen.activeSelf == false || getHeal() == 0))
         {
-            
             healthBarSync();
             characterHealth = getHeal();
-            
+
 
             if (isDashing)
             {
@@ -124,7 +125,7 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
                 photonVoiceRecorder.TransmitEnabled = false;
                 Indicator.transform.Find("IndicatorImage").GetComponent<Image>().sprite = mic_off;
             }
-            
+
             if (characterHealth == 0)
             {
                 animator.SetTrigger("Death");
@@ -134,21 +135,26 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
                     deathScreen();
                 }
             }
+
             m_view.RPC("checkState", RpcTarget.AllBuffered, false);
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+            if (Input.GetKeyDown(KeyCode.Mouse0) && canHit)
             {
-                Attack();
+                StartCoroutine(Attack());
             }
-               
+
             else if (vel.x > 0)
             {
                 spriteRenderer.flipX = true;
-                transform.GetChild(4).gameObject.transform.localPosition=new Vector3(0.618f,transform.GetChild(4).gameObject.transform.localPosition.y,transform.GetChild(4).gameObject.transform.localPosition.z);
+                transform.GetChild(4).gameObject.transform.localPosition = new Vector3(0.618f,
+                    transform.GetChild(4).gameObject.transform.localPosition.y,
+                    transform.GetChild(4).gameObject.transform.localPosition.z);
             }
             else if (vel.x < 0)
             {
                 spriteRenderer.flipX = false;
-                transform.GetChild(4).gameObject.transform.localPosition=new Vector3(-0.618f,transform.GetChild(4).gameObject.transform.localPosition.y,transform.GetChild(4).gameObject.transform.localPosition.z);
+                transform.GetChild(4).gameObject.transform.localPosition = new Vector3(-0.618f,
+                    transform.GetChild(4).gameObject.transform.localPosition.y,
+                    transform.GetChild(4).gameObject.transform.localPosition.z);
             }
         }
     }
@@ -221,7 +227,7 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
             spriteRenderer.flipX = (bool)stream.ReceiveNext();
         }
     }
-    
+
 
     private void AddObservable()
     {
@@ -263,44 +269,48 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
         }
     }
 
-    public void Attack()
+    public IEnumerator Attack()
     {
+        canHit = false;
+        isHitting = true;
         animator.SetTrigger("Attack");
-       
-        Collider2D[] hitEnemies=Physics2D.OverlapCircleAll(attackPoint.position,attackRange,enemyLayers);
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
         foreach (Collider2D enemy in hitEnemies)
         {
-            Debug.Log("We hit"+ enemy.name);
-            
-            Debug.Log(enemy.gameObject.GetComponent<PhotonView>().Owner.NickName);
+            Debug.Log("We hit" + enemy.name);
 
+            Debug.Log(enemy.gameObject.GetComponent<PhotonView>().Owner.NickName);
         }
-        
+
+        yield return new WaitForSeconds(hittingTime);
+        isHitting = false;
+        yield return new WaitForSeconds(HittingCooldown);
+        canHit = true;
     }
+
 
     void OnCollisionEnter2D(Collision2D collision)
     {
         Debug.Log(collision.collider.name);
-        if (collision.collider.name=="AttackPoint" && collision.gameObject.name=="AttackPoint")
+        if (collision.collider.name == "AttackPoint" && collision.gameObject.name == "AttackPoint")
         {
             Debug.Log("it hitted");
             health.damage(10);
             animator.SetTrigger("Hurt");
-          
         }
     }
-
-    
 
 
     public void OnDrawGizmosSelected()
     {
-        if (attackPoint==null)
+        if (attackPoint == null)
         {
             return;
         }
-        Gizmos.DrawWireSphere(attackPoint.position,attackRange);
+
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
+
     [PunRPC]
     public void checkState(bool b)
     {

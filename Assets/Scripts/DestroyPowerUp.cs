@@ -40,7 +40,7 @@ public class DestroyPowerUp : MonoBehaviour
             {
                 
                 collision.gameObject.GetComponent<CharacterMovement>().resetDashCooldown();
-                canvas.GetComponent<SkillBarController>().imageCooldown.fillAmount = 1;
+                canvas.GetComponent<SkillBarController>().dashImageCooldown.fillAmount = 1;
             }
             if (gameObject.tag=="SpeedUpItem")
             {
