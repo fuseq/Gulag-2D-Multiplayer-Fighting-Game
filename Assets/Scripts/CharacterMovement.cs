@@ -28,6 +28,10 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
     private bool isHitting;
     private float hittingTime = 0.2f;
     private float HittingCooldown = 3f;
+    private bool canRiposte = true;
+    private bool isRiposte;
+    private float riposteTime = 2f;
+    private float riposteCooldown = 3f;
     private PhotonView m_view;
     private GameObject healthBar;
     private Health health;
@@ -119,13 +123,17 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
                 photonVoiceRecorder.TransmitEnabled = true;
                 Indicator.transform.Find("IndicatorImage").GetComponent<Image>().sprite = mic_on;
             }
-
+            
             if (Input.GetKeyUp(KeyCode.Q))
             {
                 photonVoiceRecorder.TransmitEnabled = false;
                 Indicator.transform.Find("IndicatorImage").GetComponent<Image>().sprite = mic_off;
             }
-
+            if (Input.GetKeyDown(KeyCode.Space)&& canRiposte)
+            {
+                m_view.RPC("Riposte",RpcTarget.AllBuffered,false);
+            }
+           
             if (characterHealth == 0)
             {
                 animator.SetTrigger("Death");
@@ -287,6 +295,18 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
         yield return new WaitForSeconds(HittingCooldown);
         canHit = true;
     }
+    [PunRPC]
+    public IEnumerator Riposte(bool b)
+    {
+        canRiposte = false;
+        isRiposte = true;
+        animator.SetTrigger("Riposte");
+        yield return new WaitForSeconds(riposteTime);
+        isRiposte = false;
+        animator.SetTrigger("ReturnIdle");
+        yield return new WaitForSeconds(riposteCooldown);
+        canRiposte = true;
+    }
 
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -294,9 +314,13 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
         Debug.Log(collision.collider.name);
         if (collision.collider.name == "AttackPoint" && collision.gameObject.name == "AttackPoint")
         {
-            Debug.Log("it hitted");
-            health.damage(10);
-            animator.SetTrigger("Hurt");
+            if (!isRiposte)
+            {
+                Debug.Log("it hitted");
+                health.damage(10);
+                animator.SetTrigger("Hurt");
+            }
+            
         }
     }
 
@@ -323,6 +347,8 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
             transform.GetChild(4).gameObject.SetActive(false);
         }
     }
+    
+   
 
     private void healthBarSync()
     {

@@ -7,12 +7,16 @@ public class SkillBarController : MonoBehaviour
 {
     public Image dashImageCooldown;
     public Image attackImageCooldown;
+    public Image riposteImageCooldown;
     public float dashCooldown=5f;
     public float attackCooldown=3f;
+    public float riposteCooldown=3f;
     private bool dashIsCooldown;
     private bool dashIsPressed = false;
     private bool attackIsCooldown;
     private bool attackIsPressed = false;
+    private bool riposteIsCooldown;
+    private bool riposteIsPressed = false;
     private void Start()
     {
         dashImageCooldown.fillAmount = 1;
@@ -57,6 +61,25 @@ public class SkillBarController : MonoBehaviour
                 attackIsPressed = false;
             }
         }
+        
+        if (Input.GetKeyDown(KeyCode.Space) && riposteIsPressed==false)
+        {
+            riposteImageCooldown.fillAmount = 0;
+            riposteIsCooldown = true;
+            riposteIsPressed = true;
+        }
+
+        if (riposteIsCooldown)
+        {
+            riposteImageCooldown.fillAmount += 1 / riposteCooldown * Time.deltaTime;
+            if (riposteImageCooldown.fillAmount>=1)
+            {
+                riposteImageCooldown.fillAmount = 1;
+                riposteIsCooldown = false;
+                riposteIsPressed = false;
+            }
+        }
+
         
     }
 }
