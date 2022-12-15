@@ -92,48 +92,9 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
     {
         if (!m_view.IsMine) return;
         waitingScreen();
-        if (m_view.IsMine && (waitScreen.activeSelf == false || getHeal() == 0))
+
+        if (m_view.IsMine && (waitScreen.activeSelf == false))
         {
-            healthBarSync();
-            characterHealth = getHeal();
-
-
-            if (isDashing)
-            {
-                return;
-            }
-
-            moveInput.x = Input.GetAxisRaw("Horizontal");
-            moveInput.y = Input.GetAxisRaw("Vertical");
-            moveInput.Normalize();
-            speedConfig();
-            Vector3 vel = transform.rotation * rb2d.velocity;
-            if (rb2d.velocity.magnitude > 0)
-                animator.SetBool("isMoving", true);
-            else
-                animator.SetBool("isMoving", false);
-
-            if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
-            {
-                StartCoroutine(Dash());
-            }
-
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                photonVoiceRecorder.TransmitEnabled = true;
-                Indicator.transform.Find("IndicatorImage").GetComponent<Image>().sprite = mic_on;
-            }
-            
-            if (Input.GetKeyUp(KeyCode.Q))
-            {
-                photonVoiceRecorder.TransmitEnabled = false;
-                Indicator.transform.Find("IndicatorImage").GetComponent<Image>().sprite = mic_off;
-            }
-            if (Input.GetKeyDown(KeyCode.Space)&& canRiposte)
-            {
-                m_view.RPC("Riposte",RpcTarget.AllBuffered,false);
-            }
-           
             if (characterHealth == 0)
             {
                 animator.SetTrigger("Death");
@@ -144,25 +105,69 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
                 }
             }
 
-            m_view.RPC("checkState", RpcTarget.AllBuffered, false);
-            if (Input.GetKeyDown(KeyCode.Mouse0) && canHit)
+            victoryScreen();
+            healthBarSync();
+            characterHealth = getHeal();
+            if (characterHealth != 0)
             {
-                StartCoroutine(Attack());
-            }
+                if (isDashing)
+                {
+                    return;
+                }
 
-            else if (vel.x > 0)
-            {
-                spriteRenderer.flipX = true;
-                transform.GetChild(4).gameObject.transform.localPosition = new Vector3(0.618f,
-                    transform.GetChild(4).gameObject.transform.localPosition.y,
-                    transform.GetChild(4).gameObject.transform.localPosition.z);
-            }
-            else if (vel.x < 0)
-            {
-                spriteRenderer.flipX = false;
-                transform.GetChild(4).gameObject.transform.localPosition = new Vector3(-0.618f,
-                    transform.GetChild(4).gameObject.transform.localPosition.y,
-                    transform.GetChild(4).gameObject.transform.localPosition.z);
+                moveInput.x = Input.GetAxisRaw("Horizontal");
+                moveInput.y = Input.GetAxisRaw("Vertical");
+                moveInput.Normalize();
+                speedConfig();
+                Vector3 vel = transform.rotation * rb2d.velocity;
+                if (rb2d.velocity.magnitude > 0)
+                    animator.SetBool("isMoving", true);
+                else
+                    animator.SetBool("isMoving", false);
+
+                if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+                {
+                    StartCoroutine(Dash());
+                }
+
+                if (Input.GetKeyDown(KeyCode.Q))
+                {
+                    photonVoiceRecorder.TransmitEnabled = true;
+                    Indicator.transform.Find("IndicatorImage").GetComponent<Image>().sprite = mic_on;
+                }
+
+                if (Input.GetKeyUp(KeyCode.Q))
+                {
+                    photonVoiceRecorder.TransmitEnabled = false;
+                    Indicator.transform.Find("IndicatorImage").GetComponent<Image>().sprite = mic_off;
+                }
+
+                if (Input.GetKeyDown(KeyCode.Space) && canRiposte)
+                {
+                    m_view.RPC("Riposte", RpcTarget.AllBuffered, false);
+                }
+
+
+                m_view.RPC("checkState", RpcTarget.AllBuffered, false);
+                if (Input.GetKeyDown(KeyCode.Mouse0) && canHit)
+                {
+                    StartCoroutine(Attack());
+                }
+
+                else if (vel.x > 0)
+                {
+                    spriteRenderer.flipX = true;
+                    transform.GetChild(4).gameObject.transform.localPosition = new Vector3(0.618f,
+                        transform.GetChild(4).gameObject.transform.localPosition.y,
+                        transform.GetChild(4).gameObject.transform.localPosition.z);
+                }
+                else if (vel.x < 0)
+                {
+                    spriteRenderer.flipX = false;
+                    transform.GetChild(4).gameObject.transform.localPosition = new Vector3(-0.618f,
+                        transform.GetChild(4).gameObject.transform.localPosition.y,
+                        transform.GetChild(4).gameObject.transform.localPosition.z);
+                }
             }
         }
     }
@@ -277,6 +282,22 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
         }
     }
 
+    public void victoryScreen()
+    {
+        if (PhotonNetwork.PlayerList.Length < 2 && waitScreen.activeSelf == false)
+        {
+            destroyCharacter();
+            mngonline.GetComponent<ManageOnline>().DisconnectPlayer();
+            foreach (Transform eachChild in gameoversc.transform)
+            {
+                if (eachChild.name == "VictoryScreen")
+                {
+                    eachChild.gameObject.SetActive(true);
+                }
+            }
+        }
+    }
+
     public IEnumerator Attack()
     {
         canHit = false;
@@ -295,6 +316,7 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
         yield return new WaitForSeconds(HittingCooldown);
         canHit = true;
     }
+
     [PunRPC]
     public IEnumerator Riposte(bool b)
     {
@@ -320,7 +342,6 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
                 health.damage(10);
                 animator.SetTrigger("Hurt");
             }
-            
         }
     }
 
@@ -347,8 +368,7 @@ public class CharacterMovement : MonoBehaviourPun, IPunObservable
             transform.GetChild(4).gameObject.SetActive(false);
         }
     }
-    
-   
+
 
     private void healthBarSync()
     {

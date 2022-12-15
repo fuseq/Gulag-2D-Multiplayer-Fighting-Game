@@ -10,7 +10,6 @@ public class GameOverScreen : MonoBehaviour
     
     public void LoadMenu()
     {
-        
         SceneManager.LoadScene((mainMenu));
     }
    
