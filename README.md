@@ -1,2 +1,2 @@
-# CSE_377_Game_Project
-Game Programming Project
+# Gulag-2D-Multiplayer-Fighting-Game
+Gulag-2D-Multiplayer-Fighting-Game
